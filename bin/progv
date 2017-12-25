@@ -1,0 +1,15 @@
+#! /usr/bin/env node
+
+const program = require('commander');
+const main = require('../main');
+
+program
+    .version('0.0.1')
+    .option('-c, --clear', 'set roo dir')
+    .parse(process.argv);
+
+if (program.clear) {
+    main.clearVersion();
+} else {
+    main.setVersion();
+}
