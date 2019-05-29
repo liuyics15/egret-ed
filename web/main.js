@@ -37,7 +37,7 @@ var Main = /** @class */ (function () {
     function Main() {
         this.logger = document.getElementById('console');
         this.head = document.getElementById('head');
-        this.strlist = [];
+        this.strList = [];
         this.test();
         // this.start();
     }
@@ -69,7 +69,7 @@ var Main = /** @class */ (function () {
                         for (i = 0; i < showErrors; i++) {
                             showStr += server.getFullErrorString(errors[i]) + "-";
                         }
-                        this.strlist = showStr.split("-");
+                        this.strList = showStr.split("-");
                         return [2 /*return*/];
                 }
             });

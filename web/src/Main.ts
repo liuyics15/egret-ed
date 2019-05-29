@@ -4,12 +4,12 @@ class Main {
 
     logger:HTMLLabelElement;
     head:HTMLLabelElement;
-    strlist:Array<any>
+    strList:Array<String>;
     
     constructor() {
         this.logger = <HTMLLabelElement>document.getElementById('console');
         this.head =<HTMLLabelElement> document.getElementById('head');
-        this.strlist=[];
+        this.strList=[];
         this.test();
         // this.start();
     }
@@ -36,9 +36,8 @@ class Main {
         for(let i = 0;i < showErrors; i++) {
             showStr += server.getFullErrorString(errors[i])+"-";
         }
-        this.strlist=showStr.split("-");
+        this.strList=showStr.split("-");
         // this.logger.innerText = showStr;
-        // console.log(data);
     }
     
 }
