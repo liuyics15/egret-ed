@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Main</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 引入样式 -->
+<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+<body>
+    <div id="app">
+        <h1 id="head"></h1>
+
+
+        <el-table style="width: 90%;margin:auto" :data="datalist" style="width: 100%" :fit="true"
+            :highlight-current-row="true" :border="true" :row-class-name="tableRowClassName"
+            :cell-class-name="cellname">
+          
+            <el-table-column prop="filename" label="文件名" width="180" label-class-name="title1" :filters="nameselect"
+                :filter-method="namefilter">
+                
+            </el-table-column>
+            <el-table-column prop="col" label="行" sortable width="150" label-class-name="title1" :sort-method="sort"
+                :filters="colselect" :filter-method="colfilter">
+            </el-table-column>
+            <el-table-column prop="row" label="列" width="150" label-class-name="title1" :filters="rowselect"
+                :filter-method="rowfilter">
+            </el-table-column>
+            <el-table-column prop="mistake" label="错误" width="150" label-class-name="title1" :filters="mistakeselect"
+                :filter-method="mistakefilter">
+            </el-table-column>
+            <el-table-column prop="parameter" label="参数" label-class-name="title1" height="150">
+                <template slot-scope="scope">
+                    <div :class="scope.row.bindcolumn">
+                        <span class="reffile">{{ scope.row.parameter.reffile}}</span>
+                        <span class="key"> {{scope.row.parameter.key}}</span>
+                        <span class="num" v-if="scope.row.parameter.lownum">({{scope.row.parameter.lownum}})</span>
+                        <span class="num" v-if="!scope.row.parameter.expand">{{scope.row.parameter.num}} 
+                            <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isshow"
+                                 :class="scope.row.parameter.class"><span class="num" >)</span></i>
+                        </span>
+                        <div  v-else class="num">({{ scope.row.parameter.totalnum}}) 
+                            <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isshow"
+                            :class="scope.row.parameter.class"></i></div>  
+                     
+                    </div>
+                </template>
+            </el-table-column>
+
+        </el-table>
+        <el-pagination class="page" background layout="prev, pager, next, jumper" :total=tlength
+            @current-change="handleCurrentChange">
+        </el-pagination>
+        <label id="console" style="font-family: 'Microsoft JhengHei',serif"></label>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        Main.instance = new Main();
+        let data = [];
+        let totaldata = [];
+        var timer = setInterval(() => {
+
+            if (Main.instance.strlist.length > 0) {
+                for (let item of Main.instance.strlist) {
+                    let obj = {};
+                    obj.parameter = {};
+                    obj.firstclick=true;
+                    obj.bindcolumn="column";
+                    let list = item.split(" ");
+                    let name=""
+                    // console.log(list)
+                    if (list.length < 4) continue
+                    for (let i in list) {
+                        if (i == 0) {
+                            obj.filename = list[i];
+                        } else if (i == 1) {
+                            obj.col = list[i];
+                        } else if (i == 2) {
+                            obj.row = list[i];
+                        } else if (i == 3) {
+                            obj.mistake = list[i];
+                        } else if (i == 4) {
+                            obj.parameter.reffile = list[i];
+                        } else if (i == 5) {
+                            obj.parameter.key = list[i];
+                        } else {
+
+                            let splist = list[i].split(",");
+
+                            if (splist.length > 10) {
+                                obj.parameter.num = "("+list[i].split(",")[0] + ",..." + (splist.length - 1);
+                                obj.parameter.totalnum = list[i];
+                                obj.parameter.isshow = true;
+                                obj.parameter.expand = false;
+                                obj.parameter.class="el-icon-plus";
+                            } else {
+                                obj.parameter.lownum = list[i];
+                                obj.parameter.isshow = false;
+                            }
+
+                        }
+
+
+
+                    }
+                    totaldata.push(obj);
+                    let cover=[];
+                    for (let i of totaldata){
+                           if(cover.indexOf(i.filename)==-1){
+                               cover.push(i.filename)
+                           } 
+                           
+                    }
+                    for (let i of cover){
+                        let n=0;
+                        for (let j of totaldata){
+                            if(i==j.filename){
+                                n++;
+                                if(n>1){
+                                    j.filename="";
+                                }
+                            }else{
+                              continue;
+                            }
+                        }
+                    }
+                    console.log(cover)
+
+                }
+                for (let i in totaldata) {
+                    if (i < 10) {
+                        data.push(totaldata[i]);
+                    } else {
+                        break;
+                    }
+                }
+                new Vue({
+                    el: '#app',
+                    data: function () {
+                        return {
+                            datalist: data,
+                            nameselect: [],
+                            colselect: [],
+                            rowselect: [],
+                            mistakeselect: [],
+                            tlength: 100,
+                        }
+                    },
+                    methods: {
+                        tableRowClassName({ row, rowIndex }) {
+                            return "row";
+                        },
+                        cellname({ row, column, rowIndex, columnIndex }) {
+                            if (columnIndex == 4) {
+                                return "light"
+                            }
+                        },
+                        sort(a, b) {
+                            return a.col - b.col;
+
+                        },
+                        namefilter(value, row, column) {
+                            return row.filename === value;
+                        },
+                        colfilter(value, row, column) {
+                            return row.col === value;
+                        },
+                        rowfilter(value, row, column) {
+                            return row.row === value;
+                        },
+                        mistakefilter(value, row, column) {
+                            return row.mistake === value;
+                        },
+
+                        handleCurrentChange(val) {
+                            data = [];
+                            for (let i in totaldata) {
+                                if (i < 10 * val && i >= 10 * (val - 1)) {
+                                    data.push(totaldata[i]);
+                                } else {
+                                    continue
+                                }
+                            }
+                            this.datalist = data;
+                        },
+                        handleEdit(index,row){
+                            if(row.firstclick){
+                                row.parameter.class="el-icon-minus";
+                            row.parameter.expand=true;
+                            row.firstclick=false;
+                            row.bindcolumn="changecolumn";
+
+                            }else{
+                                row.parameter.class="el-icon-plus";
+                            row.parameter.expand=false;
+                                row.firstclick=true;
+                                row.bindcolumn="column";
+                            }
+                          
+                        }   
+
+                    },
+                    created() {
+                        let namelist = [];
+                        let collist = [];
+                        let rowlist = [];
+                        let mislist = [];
+                        this.tlength = totaldata.length;
+                        for (let i in data) {
+                            if (namelist.indexOf(data[i]['filename']) == -1) {
+                                namelist.push(data[i].filename);
+                                this.nameselect.push({ text: data[i].filename, value: data[i].filename });
+
+                            }
+                            if (collist.indexOf(data[i]['col']) == -1) {
+                                collist.push(data[i].col);
+                                this.colselect.push({ text: data[i].col, value: data[i].col });
+                            }
+                            if (rowlist.indexOf(data[i]['row']) == -1) {
+                                rowlist.push(data[i].row);
+                                this.rowselect.push({ text: data[i].row, value: data[i].row })
+                            }
+                            if (mislist.indexOf(data[i]['mistake']) == -1) {
+                                mislist.push(data[i].mistake);
+                                this.mistakeselect.push({ text: data[i].mistake, value: data[i].mistake })
+                            }
+
+                        }
+
+
+
+                    }
+                });
+                clearInterval(timer);
+            }
+
+        }, 1000)
+
+
+
+
+    </script>
+    <style>
+        .el-table .row {
+            font-size: 16px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: black;
+
+        }
+
+        .el-table .light {
+            font-size: 20px;
+        }
+
+        .title1 {
+            font-size: 20px;
+            color: gray;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+        }
+
+        .page {
+            margin-left: 40%;
+
+            margin-top: 2%;
+        }
+
+        .num {
+            color: goldenrod;
+
+        }
+
+        .reffile {
+            color: lightseagreen;
+            height: 50px;
+        }
+
+        .key {
+            color: lightsalmon;
+        }
+
+        .el-icon-plus {
+            color: black
+        }
+
+        .column {
+            height: 30px;
+        }
+        .changecolumn{
+            height:auto;
+        }
+        .el-icon-minus{
+            color:black;
+        }
+       
+    </style>
+</body>
+
+</html>
