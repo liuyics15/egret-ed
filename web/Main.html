@@ -20,49 +20,143 @@
             :highlight-current-row="true" :border="true" :row-class-name="tableRowClassName"
             :cell-class-name="cellname">
 
-            <el-table-column prop="filename" label="文件名" width="250" label-class-name="title1" :filters="nameselect"
-                :filter-method="namefilter">
+            <el-table-column prop="filename" label="文件名" width="250" label-class-name="title1">
+                <template slot="header" slot-scope="scope">
+                    <div> 文件名</div>
+                    <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
+                        <span class="el-dropdown-link">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-checkbox-group v-model="namecheck" @change="namefilter">
+
+                                <el-dropdown-item v-for="item in nameselect" :key="item">
+                                    <el-checkbox :label="item"></el-checkbox>
+                                </el-dropdown-item>
+
+                            </el-checkbox-group>
+                            <el-dropdown-item>
+                                <el-button style="margin-left:20%;" @click="nameReset">重置</el-button>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+
+                </template>
                 <template slot-scope="scope">
                     <div>
-                        <p class="size">{{scope.row.filename}}
+                        <div class="size">{{scope.row.filename}}
                             <i :class="scope.row.class" v-if="scope.row.expand[0]"
-                                @click="expandClick(scope.$index, scope.row)"></i></p>
+                                @click="expandFileClick(scope.$index, scope.row)"></i></div>
 
                     </div>
                 </template>
 
             </el-table-column>
-            <el-table-column prop="col" label="行" sortable width="150" label-class-name="title1" :sort-method="sort"
-                :filters="colselect" :filter-method="colfilter">
+            <el-table-column prop="col" label="行" :sortable="false" width="200" label-class-name="title1">
+                <template slot="header" slot-scope="scope">
+                    <div> 行</div>
+                    <div style="width: 40px;height: 35px;">
+                        <i style="float:left;height: 10px;" class="el-icon-caret-top" v-bind:style="{ color: topcolor}"
+                            @click="sort"></i>
+                        <i style="float:left;height: 10px;" class="el-icon-caret-bottom"
+                            v-bind:style="{ color: bottomcolor}" @click="sort"></i>
+                    </div>
+                    <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
+                        <span class="el-dropdown-link">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-checkbox-group v-model="colcheck" @change="colfilter">
+
+                                <el-dropdown-item v-for="item in colselect" :key="item">
+                                    <el-checkbox :label="item"></el-checkbox>
+                                </el-dropdown-item>
+
+                            </el-checkbox-group>
+                            <el-dropdown-item>
+                                <el-button @click="colReset">重置</el-button>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+
+                </template>
                 <template slot-scope="scope">
                     <div>
-                        <p class="size">{{scope.row.col}}</p>
-                        <p  class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand">{{item.col}}</p>
+                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoheight}">{{scope.row.col}}
+                        </div>
+                        <div class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand"
+                            v-bind:style="{ height: item.parameter.autoheight}">{{item.col}}</div>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="row" label="列" width="150" label-class-name="title1" :filters="rowselect"
-                :filter-method="rowfilter">
+            <el-table-column prop="row" label="列" width="150" label-class-name="title1">
+                <template slot="header" slot-scope="scope">
+                    <div> 列</div>
+                    <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
+                        <span class="el-dropdown-link">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-checkbox-group v-model="rowcheck" @change="rowfilter">
+
+                                <el-dropdown-item v-for="item in rowselect" :key="item">
+                                    <el-checkbox :label="item"></el-checkbox>
+                                </el-dropdown-item>
+
+                            </el-checkbox-group>
+                            <el-dropdown-item>
+                                <el-button @click="rowReset">重置</el-button>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+
+                </template>
                 <template slot-scope="scope">
                     <div>
-                        <p class="size">{{scope.row.row}}</p>
-                        <p  class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand">{{item.row}}</p>
+                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoheight}">{{scope.row.row}}
+                        </div>
+                        <div class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand"
+                            v-bind:style="{ height: item.parameter.autoheight}">{{item.row}}</div>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="mistake" label="错误" width="150" label-class-name="title1" :filters="mistakeselect"
-                :filter-method="mistakefilter">
+            <el-table-column prop="mistake" label="错误" width="150" label-class-name="title1">
+                <template slot="header" slot-scope="scope">
+                    <div> 错误</div>
+
+                    <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
+                        <span class="el-dropdown-link">
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-checkbox-group v-model="mischeck" @change="mistakefilter">
+
+                                <el-dropdown-item v-for="item in mistakeselect" :key="item">
+                                    <el-checkbox :label="item"></el-checkbox>
+                                </el-dropdown-item>
+
+                            </el-checkbox-group>
+                            <el-dropdown-item>
+                                <el-button style="margin-left:12%;" @click="misReset">重置</el-button>
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+
+
+                </template>
                 <template slot-scope="scope">
                     <div>
-                        <p  class="size">{{scope.row.mistake}}</p>
-                        <p  class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand">{{item.mistake}}</p>
+                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoheight}">{{scope.row.mistake}}
+                        </div>
+                        <div class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand"
+                            v-bind:style="{ height: item.parameter.autoheight}">{{item.mistake}}</div>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column prop="parameter" label="参数" label-class-name="title1" height="150">
                 <template slot-scope="scope">
-                    <div >
-                        <p class="size">
+                    <div v-bind:style="{ height: scope.row.parameter.autosize}" class="size"
+                        v-bind:ref="`ID${scope.row.parameter.index}`">
                         <span class="reffile">{{ scope.row.parameter.reffile}}</span><span class="key">
                             {{scope.row.parameter.key}}</span>
                         <span class="num" v-if="scope.row.parameter.lownum">({{scope.row.parameter.lownum}})</span>
@@ -73,9 +167,10 @@
                         <span v-else class="num">({{ scope.row.parameter.totalnum}})
                             <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isshow"
                                 :class="scope.row.parameter.class"></i></span>
-                            </p>
+
                     </div>
-                    <p  class="size" v-for="(item,index) in scope.row.expand" v-if="!scope.row.firstExpand"><span
+                    <div v-for="(item,index) in scope.row.expand" v-if="!scope.row.firstExpand" class="size"
+                        v-bind:style="{ height: item.parameter.autosize}" :ref="`ID${item.parameter.index}`"><span
                             class="reffile">{{item.parameter.reffile}}</span><span
                             class="key">{{item.parameter.key}}</span>
                         <span class="num" v-if="item.parameter.lownum">({{item.parameter.lownum}})</span>
@@ -85,7 +180,7 @@
                         </span>
                         <span v-else class="num">({{item.parameter.totalnum}})<i @click="expandEdit(index,item)"
                                 v-if="scope.row.parameter.isshow" :class="item.parameter.class"></i></span>
-                    </p>
+                    </div>
                 </template>
             </el-table-column>
 
@@ -107,6 +202,7 @@
             mistake:错误类型
             row:行
             col:列
+            autosize:自动变换大小
             parameter:参数对象
             包括{
                 isshow:参数较少的不显示加号
@@ -123,6 +219,7 @@
         Main.instance = new Main();
         let data = [];
         let totaldata = [];
+        let index = 0;
         var timer = setInterval(() => {
 
             if (Main.instance.strList.length > 0) {
@@ -158,6 +255,10 @@
                                 obj.parameter.isshow = true;
                                 obj.parameter.expand = false;
                                 obj.parameter.class = "el-icon-plus";
+                                obj.parameter.index = index;
+                                obj.parameter.autosize = "60px"
+                                obj.parameter.autoheight = "60px";
+                                index++;
                             } else {
                                 obj.parameter.lownum = list[i];
                                 obj.parameter.isshow = false;
@@ -169,6 +270,7 @@
 
                     }
                     totaldata.push(obj);
+
                 }
                 let cover = [];
                 let first = "";
@@ -196,7 +298,7 @@
                             }
                             n++;
                             if (n > 1) {
-                                first.expand.push({ "filename": first.filename, "col": totaldata[j].col, "row": totaldata[j].row, "mistake": totaldata[j].mistake, "parameter": totaldata[j].parameter, "firstclick": true })
+                                first.expand.push({ "filename": first.filename, "col": totaldata[j].col, "row": totaldata[j].row, "mistake": totaldata[j].mistake, "parameter": totaldata[j].parameter, "firstclick": true, })
                                 deleList.push(totaldata[j]);
 
                             }
@@ -228,6 +330,13 @@
                             rowselect: [],
                             mistakeselect: [],
                             tlength: 100,
+                            namecheck: [],
+                            colcheck: [],
+                            rowcheck: [],
+                            mischeck: [],
+                            topcolor: "",
+                            bottomcolor: "",
+                            sortindex: 0
                         }
                     },
                     methods: {
@@ -239,21 +348,91 @@
                                 return "light"
                             }
                         },
-                        sort(a, b) {
-                            return a.col - b.col;
+                        sort() {
+                            if (this.sortindex == 0) {
+                                this.topcolor = "lightblue";
+                                this.bottomcolor = "";
+                                this.datalist.sort((a, b) => {
+                                    return b.col - a.col;
+                                });
+                                this.sortindex++;
+
+                            } else if (this.sortindex == 1) {
+                                this.bottomcolor = "lightblue";
+                                this.topcolor = "";
+                                this.datalist.sort((a, b) => {
+                                    return a.col - b.col;
+                                });
+                                this.sortindex++;
+                            } else {
+                                this.sortindex = 0;
+                                this.bottomcolor = "";
+                                this.topcolor = "";
+                                this.datalist = data;
+                            }
 
                         },
-                        namefilter(value, row, column) {
-                            return row.filename === value;
+
+                        namefilter(value) {
+                            if (value.length == 0) {
+                                this.datalist = data;
+                                return;
+                            }
+                            let filterList = [];
+                            for (let i of value) {
+                                for (let j of data) {
+                                    if (i == j.filename) {
+                                        filterList.push(j);
+                                    }
+                                }
+                            }
+                            this.datalist = filterList;
                         },
-                        colfilter(value, row, column) {
-                            return row.col === value;
+
+                        colfilter(value) {
+                            if (value.length == 0) {
+                                this.datalist = data;
+                                return;
+                            }
+                            let filterList = [];
+                            for (let i of value) {
+                                for (let j of data) {
+                                    if (i == j.col) {
+                                        filterList.push(j);
+                                    }
+                                }
+                            }
+                            this.datalist = filterList;
                         },
-                        rowfilter(value, row, column) {
-                            return row.row === value;
+                        rowfilter(value) {
+                            if (value.length == 0) {
+                                this.datalist = data;
+                                return;
+                            }
+                            let filterList = [];
+                            for (let i of value) {
+                                for (let j of data) {
+                                    if (i == j.row) {
+                                        filterList.push(j);
+                                    }
+                                }
+                            }
+                            this.datalist = filterList;
                         },
-                        mistakefilter(value, row, column) {
-                            return row.mistake === value;
+                        mistakefilter(value) {
+                            if (value.length == 0) {
+                                this.datalist = data;
+                                return;
+                            }
+                            let filterList = [];
+                            for (let i of value) {
+                                for (let j of data) {
+                                    if (i == j.mistake) {
+                                        filterList.push(j);
+                                    }
+                                }
+                            }
+                            this.datalist = filterList;
                         },
 
                         handleCurrentChange(val) {
@@ -266,43 +445,105 @@
                                 }
                             }
                             this.datalist = data;
+                            this.nameselect = [];
+                            this.colselect = [];
+                            this.rowselect = [];
+                            this.mistakeselect = [];
+                            let namelist = [];
+                            let collist = [];
+                            let rowlist = [];
+                            let mislist = [];
+                            for (let i in data) {
+                                if (namelist.indexOf(data[i]['filename']) == -1) {
+                                    namelist.push(data[i].filename);
+                                    this.nameselect.push(data[i].filename);
+
+                                }
+                                if (collist.indexOf(data[i]['col']) == -1) {
+                                    collist.push(data[i].col);
+                                    this.colselect.push(data[i].col);
+                                }
+                                if (rowlist.indexOf(data[i]['row']) == -1) {
+                                    rowlist.push(data[i].row);
+                                    this.rowselect.push(data[i].row)
+                                }
+                                if (mislist.indexOf(data[i]['mistake']) == -1) {
+                                    mislist.push(data[i].mistake);
+                                    this.mistakeselect.push(data[i].mistake)
+                                }
+
+
+
+                            }
                         },
                         handleEdit(index, row) {
+                            let id = row.parameter.index;
                             if (row.firstclick) {
                                 row.parameter.class = "el-icon-minus";
                                 row.parameter.expand = true;
                                 row.firstclick = false;
+                                row.parameter.autosize = "auto";
 
                             } else {
                                 row.parameter.class = "el-icon-plus";
                                 row.parameter.expand = false;
                                 row.firstclick = true;
+                                row.parameter.autosize = "60px";
                             }
+                            let timer = setTimeout(() => {
+                                row.parameter.autoheight = window.getComputedStyle(this.$refs[`ID${id}`]).height;
+                                clearTimeout(timer)
+                            }, 100)
 
                         },
-                        expandClick(index, row) {
+                        expandFileClick(index, row) {
                             if (row.firstExpand) {
                                 row.class = "el-icon-minus";
                                 row.firstExpand = false;
 
-
                             } else {
                                 row.class = "el-icon-plus";
                                 row.firstExpand = true;
+
                             }
+
                         },
                         expandEdit(index, row) {
+                            let id = row.parameter.index;
                             if (row.firstclick) {
                                 row.parameter.class = "el-icon-minus";
                                 row.parameter.expand = true;
                                 row.firstclick = false;
+                                row.parameter.autosize = "auto";
 
                             } else {
                                 row.parameter.class = "el-icon-plus";
                                 row.parameter.expand = false;
                                 row.firstclick = true;
+                                row.parameter.autosize = "60px";
                             }
+                            let timer = setTimeout(() => {
+                                row.parameter.autoheight = window.getComputedStyle(this.$refs[`ID${id}`][0]).height;
+                                clearTimeout(timer);
+                            }, 100);
+                        },
+                        nameReset() {
+                            this.datalist = data;
+                            this.namecheck = [];
+                        },
+                        colReset() {
+                            this.datalist = data;
+                            this.colcheck = [];
+                        },
+                        rowReset() {
+                            this.datalist = data;
+                            this.rowcheck = [];
+                        },
+                        misReset() {
+                            this.datalist = data;
+                            this.mischeck = [];
                         }
+
 
                     },
                     created() {
@@ -314,21 +555,23 @@
                         for (let i in data) {
                             if (namelist.indexOf(data[i]['filename']) == -1) {
                                 namelist.push(data[i].filename);
-                                this.nameselect.push({ text: data[i].filename, value: data[i].filename });
+                                this.nameselect.push(data[i].filename);
 
                             }
                             if (collist.indexOf(data[i]['col']) == -1) {
                                 collist.push(data[i].col);
-                                this.colselect.push({ text: data[i].col, value: data[i].col });
+                                this.colselect.push(data[i].col);
                             }
                             if (rowlist.indexOf(data[i]['row']) == -1) {
                                 rowlist.push(data[i].row);
-                                this.rowselect.push({ text: data[i].row, value: data[i].row })
+                                this.rowselect.push(data[i].row)
                             }
                             if (mislist.indexOf(data[i]['mistake']) == -1) {
                                 mislist.push(data[i].mistake);
-                                this.mistakeselect.push({ text: data[i].mistake, value: data[i].mistake })
+                                this.mistakeselect.push(data[i].mistake)
                             }
+
+
 
                         }
 
@@ -360,7 +603,8 @@
         .title1 {
             font-size: 20px;
             color: gray;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            cursor: auto;
         }
 
         .page {
@@ -387,17 +631,29 @@
             color: black
         }
 
-        .column {
-            height: auto;
-        }
         .el-icon-minus {
             color: black;
         }
-        .size{
-           height: 60px; 
+
+        .size {
+            height: 60px;
+            margin-block-start: 0em;
+            margin-block-end: 0em;
         }
-       
-      
+
+        .size1 {
+            height: auto;
+            margin-block-start: 0em;
+            margin-block-end: 0em;
+        }
+
+        .el-dropdown-link {
+            cursor: pointer;
+        }
+
+        .el-icon--right {
+            margin-left: -10px;
+        }
     </style>
 </body>
 
