@@ -8,19 +8,17 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <!-- 引入样式 -->
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<link rel="stylesheet" href="style.css" >
 <!-- 引入组件库 -->
 <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 
 <body>
     <div id="app">
         <h1 id="head"></h1>
-
-
-        <el-table style="width: 90%;margin:auto" :data="datalist" style="width: 100%" :fit="true"
+        <el-table style="width: 90%;margin:auto" :data="dataList" style="width: 100%" :fit="true"
             :highlight-current-row="true" :border="true" :row-class-name="tableRowClassName"
-            :cell-class-name="cellname">
-
-            <el-table-column prop="filename" label="文件名" width="250" label-class-name="title1">
+            :cell-class-name="cellName">
+            <el-table-column prop="fileName" label="文件名" width="250" label-class-name="title1">
                 <template slot="header" slot-scope="scope">
                     <div> 文件名</div>
                     <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
@@ -28,64 +26,56 @@
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-checkbox-group v-model="namecheck" @change="namefilter">
-
-                                <el-dropdown-item v-for="item in nameselect" :key="item">
+                            <el-checkbox-group v-model="nameCheck" @change="nameFilter">
+                                <el-dropdown-item v-for="item in nameSelect" :key="item">
                                     <el-checkbox :label="item"></el-checkbox>
                                 </el-dropdown-item>
-
                             </el-checkbox-group>
                             <el-dropdown-item>
-                                <el-button style="margin-left:20%;" @click="nameReset">重置</el-button>
+                                <el-button style="margin-left:20%;" @click="selectReset(1)">重置</el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
-
                 </template>
                 <template slot-scope="scope">
                     <div>
-                        <div class="size">{{scope.row.filename}}
+                        <div class="size">{{scope.row.fileName}}
                             <i :class="scope.row.class" v-if="scope.row.expand[0]"
                                 @click="expandFileClick(scope.$index, scope.row)"></i></div>
-
                     </div>
                 </template>
-
             </el-table-column>
             <el-table-column prop="col" label="行" :sortable="false" width="200" label-class-name="title1">
                 <template slot="header" slot-scope="scope">
                     <div> 行</div>
                     <div style="width: 40px;height: 35px;">
-                        <i style="float:left;height: 10px;" class="el-icon-caret-top" v-bind:style="{ color: topcolor}"
+                        <i style="float:left;height: 10px;" class="el-icon-caret-top" v-bind:style="{ color: topColor}"
                             @click="sort"></i>
                         <i style="float:left;height: 10px;" class="el-icon-caret-bottom"
-                            v-bind:style="{ color: bottomcolor}" @click="sort"></i>
+                            v-bind:style="{ color: bottomColor}" @click="sort"></i>
                     </div>
                     <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
                         <span class="el-dropdown-link">
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-checkbox-group v-model="colcheck" @change="colfilter">
-
-                                <el-dropdown-item v-for="item in colselect" :key="item">
+                            <el-checkbox-group v-model="colCheck" @change="colFilter">
+                                <el-dropdown-item v-for="item in colSelect" :key="item">
                                     <el-checkbox :label="item"></el-checkbox>
                                 </el-dropdown-item>
-
                             </el-checkbox-group>
                             <el-dropdown-item>
-                                <el-button @click="colReset">重置</el-button>
+                                <el-button @click="selectReset(2)">重置</el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
-
                 </template>
                 <template slot-scope="scope">
                     <div>
-                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoheight}">{{scope.row.col}}
+                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoHeight}">{{scope.row.col}}
                         </div>
                         <div class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand"
-                            v-bind:style="{ height: item.parameter.autoheight}">{{item.col}}</div>
+                            v-bind:style="{ height: item.parameter.autoHeight}">{{item.col}}</div>
                     </div>
                 </template>
             </el-table-column>
@@ -97,564 +87,99 @@
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-checkbox-group v-model="rowcheck" @change="rowfilter">
-
-                                <el-dropdown-item v-for="item in rowselect" :key="item">
+                            <el-checkbox-group v-model="rowCheck" @change="rowFilter">
+                                <el-dropdown-item v-for="item in rowSelect" :key="item">
                                     <el-checkbox :label="item"></el-checkbox>
                                 </el-dropdown-item>
-
                             </el-checkbox-group>
                             <el-dropdown-item>
-                                <el-button @click="rowReset">重置</el-button>
+                                <el-button @click="selectReset(3)">重置</el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
-
                 </template>
                 <template slot-scope="scope">
                     <div>
-                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoheight}">{{scope.row.row}}
+                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoHeight}">{{scope.row.row}}
                         </div>
                         <div class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand"
-                            v-bind:style="{ height: item.parameter.autoheight}">{{item.row}}</div>
+                            v-bind:style="{ height: item.parameter.autoHeight}">{{item.row}}</div>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column prop="mistake" label="错误" width="150" label-class-name="title1">
                 <template slot="header" slot-scope="scope">
                     <div> 错误</div>
-
                     <el-dropdown placement="top-end" trigger="click" :hide-on-click="false">
                         <span class="el-dropdown-link">
                             <i class="el-icon-arrow-down el-icon--right"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-checkbox-group v-model="mischeck" @change="mistakefilter">
-
-                                <el-dropdown-item v-for="item in mistakeselect" :key="item">
+                            <el-checkbox-group v-model="misCheck" @change="mistakeFilter">
+                                <el-dropdown-item v-for="item in mistakeSelect" :key="item">
                                     <el-checkbox :label="item"></el-checkbox>
                                 </el-dropdown-item>
-
                             </el-checkbox-group>
                             <el-dropdown-item>
-                                <el-button style="margin-left:12%;" @click="misReset">重置</el-button>
+                                <el-button style="margin-left:12%;" @click="selectReset(4)">重置</el-button>
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
-
-
                 </template>
                 <template slot-scope="scope">
                     <div>
-                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoheight}">{{scope.row.mistake}}
+                        <div class="size" v-bind:style="{ height: scope.row.parameter.autoHeight}">{{scope.row.mistake}}
                         </div>
                         <div class="size" v-for="item in scope.row.expand" v-if="!scope.row.firstExpand"
-                            v-bind:style="{ height: item.parameter.autoheight}">{{item.mistake}}</div>
+                            v-bind:style="{ height: item.parameter.autoHeight}">{{item.mistake}}</div>
                     </div>
                 </template>
             </el-table-column>
             <el-table-column prop="parameter" label="参数" label-class-name="title1" height="150">
                 <template slot-scope="scope">
-                    <div v-bind:style="{ height: scope.row.parameter.autosize}" class="size"
+                    <div v-bind:style="{ height: scope.row.parameter.autoSize}" class="size"
                         v-bind:ref="`ID${scope.row.parameter.index}`">
-                        <span class="reffile">{{ scope.row.parameter.reffile}}</span><span class="key">
+                        <span class="refFile">{{ scope.row.parameter.refFile}}</span><span class="key">
                             {{scope.row.parameter.key}}</span>
-                        <span class="num" v-if="scope.row.parameter.lownum">({{scope.row.parameter.lownum}})</span>
+                        <span class="num" v-if="scope.row.parameter.lessNum">({{scope.row.parameter.lessNum}})</span>
                         <span class="num" v-if="!scope.row.parameter.expand">{{scope.row.parameter.num}}
-                            <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isshow"
+                            <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isShow"
                                 :class="scope.row.parameter.class"><span class="num">)</span></i>
                         </span>
-                        <span v-else class="num">({{ scope.row.parameter.totalnum}})
-                            <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isshow"
+                        <span v-else class="num">({{ scope.row.parameter.totalNum}})
+                            <i @click="handleEdit(scope.$index, scope.row)" v-if="scope.row.parameter.isShow"
                                 :class="scope.row.parameter.class"></i></span>
-
                     </div>
                     <div v-for="(item,index) in scope.row.expand" v-if="!scope.row.firstExpand" class="size"
-                        v-bind:style="{ height: item.parameter.autosize}" :ref="`ID${item.parameter.index}`"><span
-                            class="reffile">{{item.parameter.reffile}}</span><span
+                        v-bind:style="{ height: item.parameter.autoSize}" :ref="`ID${item.parameter.index}`"><span
+                            class="refFile">{{item.parameter.refFile}}</span><span
                             class="key">{{item.parameter.key}}</span>
-                        <span class="num" v-if="item.parameter.lownum">({{item.parameter.lownum}})</span>
+                        <span class="num" v-if="item.parameter.lessNum">({{item.parameter.lessNum}})</span>
                         <span class="num" v-if="!item.parameter.expand"
                             @click="expandEdit(index,item)">{{item.parameter.num}}
-                            <i v-if="item.parameter.isshow" :class="item.parameter.class"><span class="num">)</span></i>
+                            <i v-if="item.parameter.isShow" :class="item.parameter.class"><span class="num">)</span></i>
                         </span>
-                        <span v-else class="num">({{item.parameter.totalnum}})<i @click="expandEdit(index,item)"
-                                v-if="scope.row.parameter.isshow" :class="item.parameter.class"></i></span>
+                        <span v-else class="num">({{item.parameter.totalNum}})<i @click="expandEdit(index,item)"
+                                v-if="scope.row.parameter.isShow" :class="item.parameter.class"></i></span>
                     </div>
                 </template>
             </el-table-column>
-
         </el-table>
-        <el-pagination class="page" background layout="prev, pager, next, jumper" :total=tlength
+        <el-pagination class="page" background layout="prev, pager, next, jumper" :total=pageLength
             @current-change="handleCurrentChange">
         </el-pagination>
         <label id="console" style="font-family: 'Microsoft JhengHei',serif"></label>
     </div>
-
     <script src="main.js"></script>
     <script>
-        /* 数组对象
-            class:文件名加号的类
-            expand:相同文件名的扩展，数组存放对象
-            filename:文件名
-            firstExpand:文件名加号第一次点击
-            firstClick:参数加号第一次点击
-            mistake:错误类型
-            row:行
-            col:列
-            autosize:自动变换大小
-            parameter:参数对象
-            包括{
-                isshow:参数较少的不显示加号
-                key:[id]
-                reffile:文件名
-                lownum:参数较少时显示的参数
-                totalnum:所有的参数
-                num:参数较多时显示的参数
-                expand:参数扩展是否打开
-            }
-
-        
-        */
         Main.instance = new Main();
-        let data = [];
-        let totaldata = [];
-        let index = 0;
-        var timer = setInterval(() => {
-
-            if (Main.instance.strList.length > 0) {
-                for (let item of Main.instance.strList) {
-                    let obj = {};
-                    obj.parameter = {};
-                    obj.firstclick = true;
-                    obj.class = "el-icon-plus";
-                    let list = item.split(" ");
-                    let name = ""
-                    // console.log(list)
-                    if (list.length < 4) continue
-                    for (let i in list) {
-                        if (i == 0) {
-                            obj.filename = list[i];
-                        } else if (i == 1) {
-                            obj.col = list[i];
-                        } else if (i == 2) {
-                            obj.row = list[i];
-                        } else if (i == 3) {
-                            obj.mistake = list[i];
-                        } else if (i == 4) {
-                            obj.parameter.reffile = list[i];
-                        } else if (i == 5) {
-                            obj.parameter.key = list[i];
-                        } else {
-
-                            let splist = list[i].split(",");
-
-                            if (splist.length > 10) {
-                                obj.parameter.num = "(" + list[i].split(",")[0] + ",..." + (splist.length - 1);
-                                obj.parameter.totalnum = list[i];
-                                obj.parameter.isshow = true;
-                                obj.parameter.expand = false;
-                                obj.parameter.class = "el-icon-plus";
-                                obj.parameter.index = index;
-                                obj.parameter.autosize = "60px"
-                                obj.parameter.autoheight = "60px";
-                                index++;
-                            } else {
-                                obj.parameter.lownum = list[i];
-                                obj.parameter.isshow = false;
-                            }
-
-                        }
-
-
-
-                    }
-                    totaldata.push(obj);
-
-                }
-                let cover = [];
-                let first = "";
-                let deleList = [];
-                for (let i of totaldata) {
-                    if (cover.indexOf(i.filename) == -1) {
-                        cover.push(i.filename)
-                    }
-                }
-                for (let i of cover) {
-                    let n = 0;
-                    for (let j in totaldata) {
-                        if (i == totaldata[j].filename) {
-                            // if(j%10==0&&j!=0){
-                            //     n=1;
-                            //     first = totaldata[j];
-                            //     first.expand = [];
-                            //    continue;
-                            // }
-                            if (n == 0) {
-                                first = totaldata[j];
-                                first.expand = [];
-                                first.firstExpand = true;
-                                // console.log(first)
-                            }
-                            n++;
-                            if (n > 1) {
-                                first.expand.push({ "filename": first.filename, "col": totaldata[j].col, "row": totaldata[j].row, "mistake": totaldata[j].mistake, "parameter": totaldata[j].parameter, "firstclick": true, })
-                                deleList.push(totaldata[j]);
-
-                            }
-                        } else {
-                            continue;
-                        }
-                    }
-                }
-                for (let i of deleList) {
-                    totaldata.splice(totaldata.indexOf(i), 1);
-                }
-                console.log(totaldata)
-
-                for (let i in totaldata) {
-                    if (i < 10) {
-                        data.push(totaldata[i]);
-                    } else {
-                        break;
-                    }
-                }
-
-                new Vue({
-                    el: '#app',
-                    data: function () {
-                        return {
-                            datalist: data,
-                            nameselect: [],
-                            colselect: [],
-                            rowselect: [],
-                            mistakeselect: [],
-                            tlength: 100,
-                            namecheck: [],
-                            colcheck: [],
-                            rowcheck: [],
-                            mischeck: [],
-                            topcolor: "",
-                            bottomcolor: "",
-                            sortindex: 0
-                        }
-                    },
-                    methods: {
-                        tableRowClassName({ row, rowIndex }) {
-                            return "row";
-                        },
-                        cellname({ row, column, rowIndex, columnIndex }) {
-                            if (columnIndex == 4) {
-                                return "light"
-                            }
-                        },
-                        sort() {
-                            if (this.sortindex == 0) {
-                                this.topcolor = "lightblue";
-                                this.bottomcolor = "";
-                                this.datalist.sort((a, b) => {
-                                    return b.col - a.col;
-                                });
-                                this.sortindex++;
-
-                            } else if (this.sortindex == 1) {
-                                this.bottomcolor = "lightblue";
-                                this.topcolor = "";
-                                this.datalist.sort((a, b) => {
-                                    return a.col - b.col;
-                                });
-                                this.sortindex++;
-                            } else {
-                                this.sortindex = 0;
-                                this.bottomcolor = "";
-                                this.topcolor = "";
-                                this.datalist = data;
-                            }
-
-                        },
-
-                        namefilter(value) {
-                            if (value.length == 0) {
-                                this.datalist = data;
-                                return;
-                            }
-                            let filterList = [];
-                            for (let i of value) {
-                                for (let j of data) {
-                                    if (i == j.filename) {
-                                        filterList.push(j);
-                                    }
-                                }
-                            }
-                            this.datalist = filterList;
-                        },
-
-                        colfilter(value) {
-                            if (value.length == 0) {
-                                this.datalist = data;
-                                return;
-                            }
-                            let filterList = [];
-                            for (let i of value) {
-                                for (let j of data) {
-                                    if (i == j.col) {
-                                        filterList.push(j);
-                                    }
-                                }
-                            }
-                            this.datalist = filterList;
-                        },
-                        rowfilter(value) {
-                            if (value.length == 0) {
-                                this.datalist = data;
-                                return;
-                            }
-                            let filterList = [];
-                            for (let i of value) {
-                                for (let j of data) {
-                                    if (i == j.row) {
-                                        filterList.push(j);
-                                    }
-                                }
-                            }
-                            this.datalist = filterList;
-                        },
-                        mistakefilter(value) {
-                            if (value.length == 0) {
-                                this.datalist = data;
-                                return;
-                            }
-                            let filterList = [];
-                            for (let i of value) {
-                                for (let j of data) {
-                                    if (i == j.mistake) {
-                                        filterList.push(j);
-                                    }
-                                }
-                            }
-                            this.datalist = filterList;
-                        },
-
-                        handleCurrentChange(val) {
-                            data = [];
-                            for (let i in totaldata) {
-                                if (i < 10 * val && i >= 10 * (val - 1)) {
-                                    data.push(totaldata[i]);
-                                } else {
-                                    continue
-                                }
-                            }
-                            this.datalist = data;
-                            this.nameselect = [];
-                            this.colselect = [];
-                            this.rowselect = [];
-                            this.mistakeselect = [];
-                            let namelist = [];
-                            let collist = [];
-                            let rowlist = [];
-                            let mislist = [];
-                            for (let i in data) {
-                                if (namelist.indexOf(data[i]['filename']) == -1) {
-                                    namelist.push(data[i].filename);
-                                    this.nameselect.push(data[i].filename);
-
-                                }
-                                if (collist.indexOf(data[i]['col']) == -1) {
-                                    collist.push(data[i].col);
-                                    this.colselect.push(data[i].col);
-                                }
-                                if (rowlist.indexOf(data[i]['row']) == -1) {
-                                    rowlist.push(data[i].row);
-                                    this.rowselect.push(data[i].row)
-                                }
-                                if (mislist.indexOf(data[i]['mistake']) == -1) {
-                                    mislist.push(data[i].mistake);
-                                    this.mistakeselect.push(data[i].mistake)
-                                }
-
-
-
-                            }
-                        },
-                        handleEdit(index, row) {
-                            let id = row.parameter.index;
-                            if (row.firstclick) {
-                                row.parameter.class = "el-icon-minus";
-                                row.parameter.expand = true;
-                                row.firstclick = false;
-                                row.parameter.autosize = "auto";
-
-                            } else {
-                                row.parameter.class = "el-icon-plus";
-                                row.parameter.expand = false;
-                                row.firstclick = true;
-                                row.parameter.autosize = "60px";
-                            }
-                            let timer = setTimeout(() => {
-                                row.parameter.autoheight = window.getComputedStyle(this.$refs[`ID${id}`]).height;
-                                clearTimeout(timer)
-                            }, 100)
-
-                        },
-                        expandFileClick(index, row) {
-                            if (row.firstExpand) {
-                                row.class = "el-icon-minus";
-                                row.firstExpand = false;
-
-                            } else {
-                                row.class = "el-icon-plus";
-                                row.firstExpand = true;
-
-                            }
-
-                        },
-                        expandEdit(index, row) {
-                            let id = row.parameter.index;
-                            if (row.firstclick) {
-                                row.parameter.class = "el-icon-minus";
-                                row.parameter.expand = true;
-                                row.firstclick = false;
-                                row.parameter.autosize = "auto";
-
-                            } else {
-                                row.parameter.class = "el-icon-plus";
-                                row.parameter.expand = false;
-                                row.firstclick = true;
-                                row.parameter.autosize = "60px";
-                            }
-                            let timer = setTimeout(() => {
-                                row.parameter.autoheight = window.getComputedStyle(this.$refs[`ID${id}`][0]).height;
-                                clearTimeout(timer);
-                            }, 100);
-                        },
-                        nameReset() {
-                            this.datalist = data;
-                            this.namecheck = [];
-                        },
-                        colReset() {
-                            this.datalist = data;
-                            this.colcheck = [];
-                        },
-                        rowReset() {
-                            this.datalist = data;
-                            this.rowcheck = [];
-                        },
-                        misReset() {
-                            this.datalist = data;
-                            this.mischeck = [];
-                        }
-
-
-                    },
-                    created() {
-                        let namelist = [];
-                        let collist = [];
-                        let rowlist = [];
-                        let mislist = [];
-                        this.tlength = totaldata.length;
-                        for (let i in data) {
-                            if (namelist.indexOf(data[i]['filename']) == -1) {
-                                namelist.push(data[i].filename);
-                                this.nameselect.push(data[i].filename);
-
-                            }
-                            if (collist.indexOf(data[i]['col']) == -1) {
-                                collist.push(data[i].col);
-                                this.colselect.push(data[i].col);
-                            }
-                            if (rowlist.indexOf(data[i]['row']) == -1) {
-                                rowlist.push(data[i].row);
-                                this.rowselect.push(data[i].row)
-                            }
-                            if (mislist.indexOf(data[i]['mistake']) == -1) {
-                                mislist.push(data[i].mistake);
-                                this.mistakeselect.push(data[i].mistake)
-                            }
-
-
-
-                        }
-
-
-
-                    }
-                });
+        var timer=setInterval(()=>{
+            if(JSON.stringify(Main.instance.vueObj)!=""){
+                new Vue(Main.instance.vueObj);
                 clearInterval(timer);
             }
-
-        }, 1000)
-
-
-
-
+        },1000)
     </script>
-    <style>
-        .el-table .row {
-            font-size: 16px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: black;
-
-        }
-
-        .el-table .light {
-            font-size: 16px;
-        }
-
-        .title1 {
-            font-size: 20px;
-            color: gray;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            cursor: auto;
-        }
-
-        .page {
-            margin-left: 40%;
-
-            margin-top: 2%;
-        }
-
-        .num {
-            color: goldenrod;
-
-        }
-
-        .reffile {
-            color: lightseagreen;
-            height: 50px;
-        }
-
-        .key {
-            color: lightsalmon;
-        }
-
-        .el-icon-plus {
-            color: black
-        }
-
-        .el-icon-minus {
-            color: black;
-        }
-
-        .size {
-            height: 60px;
-            margin-block-start: 0em;
-            margin-block-end: 0em;
-        }
-
-        .size1 {
-            height: auto;
-            margin-block-start: 0em;
-            margin-block-end: 0em;
-        }
-
-        .el-dropdown-link {
-            cursor: pointer;
-        }
-
-        .el-icon--right {
-            margin-left: -10px;
-        }
-    </style>
 </body>
 
 </html>
