@@ -2,7 +2,6 @@ namespace Vue{
     /**
     *@param total 所有页数数据的数组
     *@param cur 当前页面数据的数组
-     
     */
     export function vueObj(total:Array<object>,cur:Array<object>):object{
         let curPage=cur;

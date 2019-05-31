@@ -47,6 +47,7 @@ class Main {
             showStr += server.getFullErrorString(errors[i])+"-";
         }
         this.strList=showStr.split("-");
+        // console.log(this.strList)
         this.init();
         // this.logger.innerText = showStr;
     }
@@ -84,7 +85,7 @@ class Main {
                         obj["mistake"] = list[i];
                         break;
                     case 4:
-                        obj["parameter"]["reffile"] = list[i];
+                        obj["parameter"]["refFile"] = list[i];
                         break;
                     case 5:
                         obj["parameter"]["key"] = list[i];

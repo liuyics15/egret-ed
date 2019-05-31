@@ -233,7 +233,11 @@ namespace server {
             back +=" "+point.line;
             if (point.attr != void 0) {
                 back += " "+point.attr;
+            }else{
+                back += " "+"未定义";
             }
+        }else{
+            back += " "+"未定义";
         }
         return back;
     }

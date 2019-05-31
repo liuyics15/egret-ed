@@ -74,6 +74,7 @@ var Main = /** @class */ (function () {
                             showStr += server.getFullErrorString(errors[i]) + "-";
                         }
                         this.strList = showStr.split("-");
+                        // console.log(this.strList)
                         this.init();
                         return [2 /*return*/];
                 }
@@ -116,7 +117,7 @@ var Main = /** @class */ (function () {
                         obj["mistake"] = list[i];
                         break;
                     case 4:
-                        obj["parameter"]["reffile"] = list[i];
+                        obj["parameter"]["refFile"] = list[i];
                         break;
                     case 5:
                         obj["parameter"]["key"] = list[i];
@@ -331,6 +332,12 @@ var server;
             if (point.attr != void 0) {
                 back += " " + point.attr;
             }
+            else {
+                back += " " + "未定义";
+            }
+        }
+        else {
+            back += " " + "未定义";
         }
         return back;
     }
@@ -341,7 +348,6 @@ var Vue;
     /**
     *@param total 所有页数数据的数组
     *@param cur 当前页面数据的数组
-     
     */
     function vueObj(total, cur) {
         var curPage = cur;
