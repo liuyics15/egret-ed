@@ -1,0 +1,65 @@
+.el-table .row {
+    font-size: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: black;
+
+}
+
+.el-table .light {
+    font-size: 16px;
+}
+
+.title1 {
+    font-size: 20px;
+    color: gray;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    cursor: auto;
+}
+
+.page {
+    margin-left: 40%;
+
+    margin-top: 2%;
+}
+
+.num {
+    color: goldenrod;
+
+}
+
+.refFile {
+    color: lightseagreen;
+    height: 50px;
+}
+
+.key {
+    color: lightsalmon;
+}
+
+.el-icon-plus {
+    color: black
+}
+
+.el-icon-minus {
+    color: black;
+}
+
+.size {
+    height: 60px;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+}
+
+.size1 {
+    height: auto;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+}
+
+.el-dropdown-link {
+    cursor: pointer;
+}
+
+.el-icon--right {
+    margin-left: -10px;
+}
