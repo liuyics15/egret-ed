@@ -173,12 +173,6 @@
     <script src="main.js"></script>
     <script>
         Main.instance = new Main();
-        var timer=setInterval(()=>{
-            if(JSON.stringify(Main.instance.vueObj)!=""){
-                new Vue(Main.instance.vueObj);
-                clearInterval(timer);
-            }
-        },1000)
     </script>
 </body>
 

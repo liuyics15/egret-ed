@@ -2,17 +2,21 @@ class Main {
     
     static instance:Main;
 
+    // ~ RESOURCE
     logger:HTMLLabelElement;
     head:HTMLLabelElement;
-    strList:Array<String>;
-      /* 当前页面的数组 */
-      curPageList: Array<object>;
-      /* 所有页面的数组 */
-      totalPageList: Array<object>;
-      /* 每个参数的id用来绑定ref */
-      index: number = 0;
-      /* vue对象 */
-      vueObj:object={};
+    
+    
+    // ~ DATA
+    private strList:Array<String>;
+    /* 当前页面的数组 */
+    private curPageList: Array<object>;
+    /* 所有页面的数组 */
+    private totalPageList: Array<object>;
+    /* 每个参数的id用来绑定ref */
+    private index: number = 0;
+    /* vue对象 */
+    private vueObj:object={};
     
     constructor() {
         this.logger = <HTMLLabelElement>document.getElementById('console');
@@ -37,26 +41,38 @@ class Main {
     
     private async test() {
         // this.head.innerText = "本地调试";
-        let req = await fetch("http://localhost:3000/errors.json");
+        let req = await fetch("errors.json");
         let txt = await req.text();
         let errors:server.ErrorInfo[] = JSON.parse(txt);
-        // const MAX_SHOW_ITEMS = 50;
-        // let showErrors = errors.length >= MAX_SHOW_ITEMS ? MAX_SHOW_ITEMS : errors.length;
+
         let showStr = "";
         for(let i = 0;i < errors.length; i++) {
             showStr += server.getFullErrorString(errors[i])+"-";
         }
         this.strList=showStr.split("-");
         // console.log(this.strList)
-        this.init();
-        // this.logger.innerText = showStr;
+        this.init(errors);
+        
+        new Vue(this.vueObj);
     }
-    private init() {
+    
+    private init(errors:server.ErrorInfo[]):void {
+        /*todo: 可以直接使用errors去渲染数据*/
         for (let item of this.strList) {
             /* 数组对象 
             class:文件名加号的类,用来控制加减号 expand:相同文件名的扩展，数组存放对象fileName:
             文件名firstExpand:文件名加号第一次点击 firstClick:参数加号第一次点击mistake:错误类型
             row:行col:列parameter:参数对象
+            */
+            
+            /*
+             todo 所有对象以接口的形式声明属性 
+                let obJ:{
+                    firstClick:boolean;
+                    fileName:string;
+                    col:number;
+                    row:number;
+                }
             */
             let obj = {};
             /* 参数对象，包括
