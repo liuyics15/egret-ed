@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "system",
     "outFile": "main.js",
     "sourceMap": true,
     "lib": [
       "dom",
       "es5",
       "es2015.promise"
+    ],
+    "types": [
+      
     ]
   },
   "exclude": [

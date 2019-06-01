@@ -1,3 +1,4 @@
+///<reference path="ItemRender.ts"/>
 
 class CustomRender extends ItemRender<server.ErrorInfo>{
 
