@@ -26,7 +26,7 @@ class Main {
         //加入dom树
         document.body.appendChild(list.domElement);
         //设置渲染
-        list.setRender(data => new CustomRender());
+        list.setRender(createRender);
         
         /*
             todo 这里通过data的类型生成该类型的渲染器
