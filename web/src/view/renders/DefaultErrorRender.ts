@@ -1,5 +1,5 @@
 
-class DefaultErrorRender extends ItemRender<server.IErrorBase> {
+class DefaultErrorRender extends ErrorRenderBase {
     
     data:server.IErrorBase;
     

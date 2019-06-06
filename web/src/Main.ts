@@ -22,7 +22,7 @@ class Main {
         let errors:server.ErrorInfo[] = JSON.parse(txt);
         
         //列表控件
-        let list = new List();
+        let list = new List({width:600,height:50});
         //加入dom树
         document.body.appendChild(list.domElement);
         //设置渲染
